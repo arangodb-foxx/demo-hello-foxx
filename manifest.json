@@ -1,7 +1,8 @@
 {
   "name": "hallo-foxx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An simple example application.",
+  "thumbnail": "thumbnail.png",
 
   "apps": {
     "/": "frank.js"
