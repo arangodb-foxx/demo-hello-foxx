@@ -1,7 +1,7 @@
 {
   "name": "hallo-foxx",
   "version": "1.0.1",
-  "description": "An simple example application.",
+  "description": "A simple example application.",
   "thumbnail": "thumbnail.png",
 
   "apps": {
