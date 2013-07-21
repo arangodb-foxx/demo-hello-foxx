@@ -1,18 +1,59 @@
 var FoxxApplication = require("org/arangodb/foxx").Application;
-var app = new FoxxApplication();
+var app = new FoxxApplication(applicationContext);
 
-app.requires = {
-  "arangodb": "org/arangodb",
-  "actions": "org/arangodb/actions"
-};
+var arangodb = require("org/arangodb");
+var actions = require("org/arangodb/actions");
+var halloworld = require("a").text;
+
+var texts = app.createRepository("texts");
 
 // .............................................................................
-// a simple text output
+// a simple text output with static text
 // .............................................................................
 
 app.get('/hallo-world.txt', function(req, res) {
   res.set("Content-Type", "text/plain; charset=utf-8");
-  res.body = require("a").text + "\n";
+  res.body = "Hallo World (static)\n";
+  res.statusCode = actions.HTTP_OK;
+});
+
+// .............................................................................
+// a simple text output from global variable
+// .............................................................................
+
+app.get('/hallo-world-global.txt', function(req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = halloworld + " (global)\n";
+  res.statusCode = actions.HTTP_OK;
+});
+
+// .............................................................................
+// a simple text output from local require
+// .............................................................................
+
+app.get('/hallo-world-local.txt', function(req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = require("a").text + " (local)\n";
+  res.statusCode = actions.HTTP_OK;
+});
+
+// .............................................................................
+// a simple text output from repository
+// .............................................................................
+
+app.get('/hallo-world-repo.txt', function(req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = texts.collection.any().text + " (repo)\n";
+  res.statusCode = actions.HTTP_OK;
+});
+
+// .............................................................................
+// application context
+// .............................................................................
+
+app.get('/application-context.txt', function(req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = arangodb.inspect(applicationContext) + " \n";
   res.statusCode = actions.HTTP_OK;
 });
 
@@ -39,9 +80,3 @@ app.get('/echo.txt', function(req, res, next, options) {
   res.contentType = "text/plain; charset=utf-8";
   res.body = arangodb.inspect(result);
 });
-
-// .............................................................................
-// GO, Foxx, GO
-// .............................................................................
-
-app.start(applicationContext);
