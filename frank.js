@@ -1,3 +1,5 @@
+'use strict';
+
 var FoxxApplication = require("org/arangodb/foxx").Application;
 var app = new FoxxApplication(applicationContext);
 
@@ -80,3 +82,12 @@ app.get('/echo.txt', function(req, res, next, options) {
   res.contentType = "text/plain; charset=utf-8";
   res.body = arangodb.inspect(result);
 });
+
+// -----------------------------------------------------------------------------
+// --SECTION--                                                       END-OF-FILE
+// -----------------------------------------------------------------------------
+
+/// Local Variables:
+/// mode: outline-minor
+/// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
+/// End:
