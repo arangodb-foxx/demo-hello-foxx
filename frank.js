@@ -50,7 +50,23 @@ app.get('/hello-world-repo.txt', function(req, res) {
 });
 
 // .............................................................................
-// application context
+// application context as json
+// .............................................................................
+
+app.get('/application-context.json', function(req, res) {
+  res.contentType = "application/json; charset=utf-8";
+
+  var c = applicationContext._shallowCopy;
+  delete c.foxxes;
+  delete c.routingInfo;
+  delete c.appModule;
+
+  res.body = JSON.stringify(c) + " \n";
+  res.statusCode = actions.HTTP_OK;
+});
+
+// .............................................................................
+// application context as text
 // .............................................................................
 
 app.get('/application-context.txt', function(req, res) {
