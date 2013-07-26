@@ -29,24 +29,28 @@
 /// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
-(function() {
-  "use strict";
+var console = require("console");
+var arangodb = require("org/arangodb");
+var db = arangodb.db;
 
-  var console = require("console");
-  var arangodb = require("org/arangodb");
-  var db = arangodb.db;
+var texts = applicationContext.collectionName("texts");
 
-  var texts = applicationContext.collectionName("texts");
+if (db._collection(texts) === null) {
+  var collection = db._create(texts);
 
+  collection.save({ text: "Hallo World!" });
+  collection.save({ text: "Have a nice day!" });
+  collection.save({ text: "Guten Tag!" });
+}
+else {
+  console.warn("collection '%s' already exists. Leaving it untouched.", texts);
+}
 
-  if (db._collection(texts) === null) {
-    var collection = db._create(texts);
+// -----------------------------------------------------------------------------
+// --SECTION--                                                       END-OF-FILE
+// -----------------------------------------------------------------------------
 
-    collection.save({ text: "Hallo World!" });
-    collection.save({ text: "Have a nice day!" });
-    collection.save({ text: "Guten Tag!" });
-  }
-  else {
-    console.warn("collection '%s' already exists. Leaving it untouched.", texts);
-  }
-}());
+// Local Variables:
+// mode: outline-minor
+// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
+// End:

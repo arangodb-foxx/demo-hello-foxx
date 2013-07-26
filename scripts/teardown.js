@@ -29,17 +29,22 @@
 /// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
-(function() {
-  "use strict";
+var console = require("console");
+var arangodb = require("org/arangodb");
+var db = arangodb.db;
 
-  var console = require("console");
-  var arangodb = require("org/arangodb");
-  var db = arangodb.db;
+var todos = applicationContext.collectionName("texts");
+var collection = db._collection(todos);
 
-  var todos = applicationContext.collectionName("texts");
-  var collection = db._collection(todos);
+if (collection !== null) {
+  collection.drop();
+}
 
-  if (collection !== null) {
-    collection.drop();
-  }
-}());
+// -----------------------------------------------------------------------------
+// --SECTION--                                                       END-OF-FILE
+// -----------------------------------------------------------------------------
+
+// Local Variables:
+// mode: outline-minor
+// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
+// End:
