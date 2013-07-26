@@ -5,7 +5,7 @@ var app = new FoxxApplication(applicationContext);
 
 var arangodb = require("org/arangodb");
 var actions = require("org/arangodb/actions");
-var halloworld = require("a").text;
+var helloworld = require("a").text;
 
 var texts = app.createRepository("texts");
 
@@ -13,7 +13,7 @@ var texts = app.createRepository("texts");
 // a simple text output with static text
 // .............................................................................
 
-app.get('/hallo-world.txt', function(req, res) {
+app.get('/hello-world.txt', function(req, res) {
   res.set("Content-Type", "text/plain; charset=utf-8");
   res.body = "Hallo World (static)\n";
   res.statusCode = actions.HTTP_OK;
@@ -23,9 +23,9 @@ app.get('/hallo-world.txt', function(req, res) {
 // a simple text output from global variable
 // .............................................................................
 
-app.get('/hallo-world-global.txt', function(req, res) {
+app.get('/hello-world-global.txt', function(req, res) {
   res.set("Content-Type", "text/plain; charset=utf-8");
-  res.body = halloworld + " (global)\n";
+  res.body = helloworld + " (global)\n";
   res.statusCode = actions.HTTP_OK;
 });
 
@@ -33,7 +33,7 @@ app.get('/hallo-world-global.txt', function(req, res) {
 // a simple text output from local require
 // .............................................................................
 
-app.get('/hallo-world-local.txt', function(req, res) {
+app.get('/hello-world-local.txt', function(req, res) {
   res.set("Content-Type", "text/plain; charset=utf-8");
   res.body = require("a").text + " (local)\n";
   res.statusCode = actions.HTTP_OK;
@@ -43,7 +43,7 @@ app.get('/hallo-world-local.txt', function(req, res) {
 // a simple text output from repository
 // .............................................................................
 
-app.get('/hallo-world-repo.txt', function(req, res) {
+app.get('/hello-world-repo.txt', function(req, res) {
   res.set("Content-Type", "text/plain; charset=utf-8");
   res.body = texts.collection.any().text + " (repo)\n";
   res.statusCode = actions.HTTP_OK;
