@@ -1,13 +1,14 @@
 'use strict';
 
-var FoxxApplication = require("org/arangodb/foxx").Application;
-var app = new FoxxApplication(applicationContext);
+var Application = require("org/arangodb/foxx").Application;
+var Repository = require("org/arangodb/foxx").Repository;
 
 var arangodb = require("org/arangodb");
 var actions = require("org/arangodb/actions");
 var helloworld = require("a").text;
 
-var texts = app.createRepository("texts");
+var app = new Application(applicationContext);
+var texts = new Repository(app.collection("texts"));
 
 // .............................................................................
 // a simple text output with static text
