@@ -6,7 +6,7 @@
   "thumbnail": "thumbnail.png",
 
   "apps": {
-    "/": "frank.js"
+    "/": "app.js"
   },
 
   "setup": "scripts/setup.js",
