@@ -3,7 +3,7 @@
 /*global require, applicationContext*/
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief A TODO-List Foxx-Application written for ArangoDB
+/// @brief A Demo Foxx-Application written for ArangoDB
 ///
 /// @file
 ///
