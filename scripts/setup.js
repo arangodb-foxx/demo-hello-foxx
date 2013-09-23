@@ -38,9 +38,9 @@ var texts = applicationContext.collectionName("texts");
 if (db._collection(texts) === null) {
   var collection = db._create(texts);
 
-  collection.save({ text: "Hallo World!" });
-  collection.save({ text: "Have a nice day!" });
-  collection.save({ text: "Guten Tag!" });
+  collection.save({ text: "entry 1 from collection texts" });
+  collection.save({ text: "entry 2 from collection texts" });
+  collection.save({ text: "entry 3 from collection texts" });
 }
 else {
   console.warn("collection '%s' already exists. Leaving it untouched.", texts);
