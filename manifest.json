@@ -1,11 +1,11 @@
 {
   "name": "hello-foxx",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A simple example application.",
   "author": "Frank Celler",
   "thumbnail": "thumbnail.png",
 
-  "apps": {
+  "controllers": {
     "/": "app.js"
   },
 
