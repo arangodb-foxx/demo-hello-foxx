@@ -41,7 +41,8 @@ controller.get('/hello-world-local.txt', function(req, res) {
 });
 
 // .............................................................................
-// a simple text output from repository
+// get an entry from the texts-collection in ArangoDB. The collection is
+// set up and populated in setup.js
 // .............................................................................
 
 controller.get('/hello-world-repo.txt', function(req, res) {
