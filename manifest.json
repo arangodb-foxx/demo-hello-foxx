@@ -1,20 +1,28 @@
 {
-  "name": "hello-foxx",
-  "version": "1.2.3",
-  "description": "A simple example application.",
-  "author": "Frank Celler",
-  "thumbnail": "thumbnail.png",
+    "name": "hello-foxx",
+    "version": "1.4.0",
+    "description": "A simple example application.",
+    "author": "Frank Celler",
+    "thumbnail": "thumbnail.png",
 
-  "controllers": {
-    "/": "app.js"
-  },
+    "controllers": {
+        "/": "app.js"
+    },
 
-  "setup": "scripts/setup.js",
-  "teardown": "scripts/teardown.js",
+    "setup": "scripts/setup.js",
+    "teardown": "scripts/teardown.js",
 
-  "files": {
-    "/": "files"
-  },
+    "assets": {
+        "layout.css": {
+            "files": [
+                "assets/css/base.css",
+                "assets/css/custom.css"
+            ]
+        }
+    },
+    "files": {
+        "/": "files"
+    },
 
-  "lib" : "lib"
+    "lib": "."
 }
