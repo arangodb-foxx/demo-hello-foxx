@@ -1,1 +1,0 @@
-exports.name = appCollection("miau");
