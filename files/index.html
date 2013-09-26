@@ -6,7 +6,7 @@
 <script type="text/javascript" src="scripts.js"></script>
 <link type="text/css" rel="stylesheet" href="highlighter.css" />
 <link type="text/css" rel="stylesheet" href="bootstrap.css" />
-
+<link type="text/css" rel="stylesheet" href="layout.css" />
 
 <script type="text/javascript">
 $(document).ready(function () {
@@ -73,8 +73,8 @@ $(document).ready(function () {
     var e = $('#examples');
     e.append('<h2>' + s.name + '</h2>');
     s.routes.forEach(function (r) {
-      e.append('<a href="' + r[0] + '">' + r[1] + '</a>');
-      e.append('<p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p>');
+      e.append('<h3><a href="' + r[0] + '">' + r[1] + '</a></h3>');
+      e.append('<div class=\"example\"><p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p></div>');
     });
   });
 
@@ -86,7 +86,6 @@ $(document).ready(function () {
   })
   .success(function (data) {
     if (data) {
-      console.log(data);
       var name;
       for (name in data) {
         if (data.hasOwnProperty(name)) {
@@ -101,8 +100,17 @@ $(document).ready(function () {
 </script>
 </head>
 <body>
+<div class="container">
 
-<h1>Hello Foxx <small>Foxx usage examples</small></h1>
+ <div class="hero-unit">
+<h1>Foxx usage examples</h1>
+</div>
+
+<div class="alert alert-success">
+  <p>Click on the example name to see it in action.</p>
+</div>
+
+<div id="examples"></div>
 <pre>
     /\
    (~(
@@ -111,9 +119,9 @@ $(document).ready(function () {
      (       \ /
      /|/--\|\ V
      " "   " "
+    May the Foxx be with you.
 </pre>
 
-<div id="examples">
 </div>
 
 </body>
