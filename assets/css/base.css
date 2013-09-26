@@ -1,5 +1,4 @@
 /* this is defined in assets/css/base.css */
-body {
-    background-color: red;
+.example {
+    margin-bottom: 30px;
 }
-
