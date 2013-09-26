@@ -10,7 +10,7 @@ framework.
 can be found in the applications folder.
 
     {
-      "description": "This is 'Hallo World' for ArangoDB Foxx.",
+      "description": "This is 'Hello World' for ArangoDB Foxx.",
       "author": "Frank Celler",
 
       "versions": {

@@ -1,5 +1,4 @@
 /*jslint indent: 2, nomen: true, maxlen: 100, white: true, plusplus: true, unparam: true */
-/*global todos*/
 /*global require, applicationContext*/
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,7 @@
 ///
 /// Copyright holder is triAGENS GmbH, Cologne, Germany
 ///
-/// @author Michael Hackstein
+/// @author Frank Celler
 /// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,8 +32,8 @@ var console = require("console");
 var arangodb = require("org/arangodb");
 var db = arangodb.db;
 
-var todos = applicationContext.collectionName("texts");
-var collection = db._collection(todos);
+var texts = applicationContext.collectionName("texts");
+var collection = db._collection(texts);
 
 if (collection !== null) {
   collection.drop();
@@ -46,5 +45,5 @@ if (collection !== null) {
 
 // Local Variables:
 // mode: outline-minor
-// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
+// outline-regexp: "/// @brief\\|/// @addtogroup\\|// --SECTION--\\|/// @page\\|/// @\\}"
 // End:

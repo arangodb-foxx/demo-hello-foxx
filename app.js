@@ -1,3 +1,33 @@
+/*jslint indent: 2, nomen: true, maxlen: 100, white: true, plusplus: true, unparam: true */
+/*global require, applicationContext*/
+
+////////////////////////////////////////////////////////////////////////////////
+/// @brief A Demo Foxx-Application written for ArangoDB
+///
+/// @file
+///
+/// DISCLAIMER
+///
+/// Copyright 2010-2013 triagens GmbH, Cologne, Germany
+///
+/// Licensed under the Apache License, Version 2.0 (the "License");
+/// you may not use this file except in compliance with the License.
+/// You may obtain a copy of the License at
+///
+///     http://www.apache.org/licenses/LICENSE-2.0
+///
+/// Unless required by applicable law or agreed to in writing, software
+/// distributed under the License is distributed on an "AS IS" BASIS,
+/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+/// See the License for the specific language governing permissions and
+/// limitations under the License.
+///
+/// Copyright holder is triAGENS GmbH, Cologne, Germany
+///
+/// @author Frank Celler
+/// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
+////////////////////////////////////////////////////////////////////////////////
+
 (function () {
 
     /*
@@ -8,20 +38,18 @@
      */
     "use strict";
 
-    var Controller = require("org/arangodb/foxx").Controller;
-    var Repository = require("org/arangodb/foxx").Repository;
-
-
-    var arangodb = require("org/arangodb");
-    var db = arangodb.db;
-    var actions = require("org/arangodb/actions");
-    var helloworld = require("./lib/a").text;
-
-    var controller = new Controller(applicationContext);
-    var texts = new Repository(controller.collection("texts"));
+    var Controller = require("org/arangodb/foxx").Controller,
+        Repository = require("org/arangodb/foxx").Repository,
+        console = require("console"),
+        arangodb = require("org/arangodb"),
+        db = arangodb.db,
+        actions = require("org/arangodb/actions"),
+        helloworld = require("./lib/a").text,
+        controller = new Controller(applicationContext),
+        texts = new Repository(controller.collection("texts"));
 
     // .............................................................................
-    // Example 1.1: Route without parameters & simple text output with static text
+    // Example: Route without parameters & simple text output with static text
     // .............................................................................
 
     controller.get('/hello', function (req, res) {
@@ -30,16 +58,16 @@
     });
 
     // .............................................................................
-    // Example 1.2: Route with parameter & simple text output
+    // Example: Route with parameter & simple text output
     // .............................................................................
-    controller.get("/hello/:name", function (req, res) {
+    controller.get("/hello_name/:name", function (req, res) {
         res.set("Content-Type", "text/plain");
         res.body = "Hello " + req.params("name");
     });
 
 
     // .............................................................................
-    // Example 1.3: Accessing the query component, return text
+    // Example: Accessing the query component, return text
     // .............................................................................
     controller.get("/sum", function (req, res) {
         var sum = parseInt(req.params("a"), 10) + parseInt(req.params("b"), 10);
@@ -48,7 +76,7 @@
 
 
     // .............................................................................
-    // Example 1.4: getting the application context as JSON
+    // Example: getting the application context as JSON
     // .............................................................................
 
     controller.get('/appcontext', function (req, res) {
@@ -64,7 +92,7 @@
 
 
     // .............................................................................
-    // Example 2.1: get an entry from the texts-collection in ArangoDB. The collection is
+    // Example: get an entry from the texts-collection in ArangoDB. The collection is
     // set up and populated in scripts/setup.js
     // .............................................................................
 
@@ -75,38 +103,38 @@
 
 
     // .............................................................................
-    // Example 2.2: run AQL query from FOXX
+    // Example: run AQL query from FOXX
     // .............................................................................
 
     controller.get('/run_aql', function (req, res) {
         res.set("Content-Type", "text/plain; charset=utf-8");
-        var stmt = db._createStatement({ "query": "FOR i IN [ 1, 2 ] RETURN i * 2" });
-        var c = stmt.execute();
+        var stmt = db._createStatement({ "query": "FOR i IN [ 1, 2 ] RETURN i * 2" }),
+            c = stmt.execute();
         res.body = c.toArray().toString();
     });
 
 
     // .............................................................................
-    // Example 3.1 Init FoxxModel & use method
+    // Example: Init FoxxModel & use method
     // .............................................................................
     controller.get('/createtiger/:name', function (req, res) {
-        var Tiger = require("./models/tiger").Model;
-        var myTiger = new Tiger({
-            name: req.params("name")
-        });
+        var Tiger = require("./models/tiger").Model,
+            myTiger = new Tiger({
+                name: req.params("name")
+            });
         res.set("Content-Type", "text/plain; charset=utf-8");
         res.body = myTiger.growl();
     });
 
     // .............................................................................
-    // Example 3.2 Save FoxxModel in DB
+    // Example: Save FoxxModel in DB
     // .............................................................................
     controller.get('/savetiger/:name', function (req, res) {
-        var Tiger = require("./models/tiger").Model;
-        var myTiger = new Tiger({
-            name: req.params("name")
-        });
-        if (myTiger.get('size') == null) {
+        var Tiger = require("./models/tiger").Model,
+            myTiger = new Tiger({
+                name: req.params("name")
+            });
+        if (myTiger.get('size') === null) {
             myTiger.set('size', Math.floor((Math.random() * 190) + 100));
         }
         texts.collection.save(myTiger.forDB());
@@ -116,7 +144,7 @@
 
 
     // .............................................................................
-    // Example 4.1 write to ArangoDB log
+    // Example: write to ArangoDB log
     // .............................................................................
     controller.get('/log', function (req, res) {
 
@@ -124,14 +152,15 @@
             throw new RangeError("[hello-foxx] Division by zero!");
         }
         catch (e) {
-            console.log(e.message);
+            console.warn(e.message);
         }
         res.set("Content-Type", "text/plain; charset=utf-8");
-        res.body = "division by zero error was triggered and exception message was logged in arangodb log"
+        res.body = "division by zero error was triggered and an " + 
+                   "exception message was logged in arangodb log";
     });
 
     // .............................................................................
-    // 5.1 Return http status 303 and an error object
+    // Example: Return http status 303 and an error object
     // .............................................................................
     controller.get('/error',function (req, res) {
         throw new RangeError("[hello-foxx] Division by zero!");
@@ -144,7 +173,7 @@
         });
 
     // .............................................................................
-    // 6.1 deliver static html file
+    // Example: deliver static html file
     // app.js is not involved for this example
     // in this demo app all files in the files folder can be accessed static
     // this is configured in manifest.js in the "files" section
@@ -152,7 +181,7 @@
 
 
     // .............................................................................
-    // 6.2 Using the assets option
+    // Example: Using the assets option
     // app.js is not involved for this example
     // manifest.js contains a definition for "layout.css"
     // assets/css/base.css and assets/css/custom.css are combined and accessible
@@ -162,7 +191,7 @@
     // .............................................................................
 
     // .............................................................................
-    // Example 10.4: convert the response object to text
+    // Example: convert the response object to text
     // .............................................................................
 
     controller.get('/response_to_text', function (req, res, next, options) {
@@ -174,7 +203,7 @@
 
 
     // .............................................................................
-    // Example 10.1 Accessing global variables
+    // Example: Accessing global variables
     // .............................................................................
 
     controller.get('/global_var', function (req, res) {
@@ -183,7 +212,7 @@
     });
 
     // .............................................................................
-    // Example 10.2: local require
+    // Example: local require
     // .............................................................................
 
     controller.get('/local_require', function (req, res) {
@@ -193,7 +222,7 @@
     });
 
     // .............................................................................
-    // Example 10.3: echo the response object
+    // Example: echo the response object
     // .............................................................................
 
     controller.get('/echo_response', function (req, res, next, options) {
@@ -205,15 +234,34 @@
     });
 
 
-    //         res.statusCode = actions.HTTP_OK;
-
     // .............................................................................
-    // Example 10.5: return application context as text
+    // Example: return application context as text
     // .............................................................................
 
     controller.get('/appcontext_as_txt', function (req, res) {
         res.set("Content-Type", "text/plain; charset=utf-8");
         res.body = arangodb.inspect(applicationContext) + " \n";
+    });
+    
+    
+    // .............................................................................
+    // Helper function to retrieve the source code of the defined routes
+    // .............................................................................
+
+    controller.get('/source', function (req, res) {
+      var routes = controller.routingInfo.routes;
+      var normalize = function (url) {
+        return url.replace(/^\/?([a-zA-Z0-9_]+).*$/, '$1');
+      };
+
+      var result = { };
+      routes.forEach(function (r) {
+        if (r.hasOwnProperty('url') && r.hasOwnProperty('action')) {
+          result[normalize(r.url.match)] = String(r.action.callback);
+        }
+      });
+
+      res.json(result);
     });
 
 
@@ -223,7 +271,7 @@
 // --SECTION--                                                       END-OF-FILE
 // -----------------------------------------------------------------------------
 
-/// Local Variables:
-/// mode: outline-minor
-/// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
-/// End:
+// Local Variables:
+// mode: outline-minor
+// outline-regexp: "/// @brief\\|/// @addtogroup\\|// --SECTION--\\|/// @page\\|/// @\\}"
+// End:

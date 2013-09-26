@@ -1,5 +1,4 @@
 /*jslint indent: 2, nomen: true, maxlen: 100, white: true, plusplus: true, unparam: true */
-/*global todos*/
 /*global require, applicationContext*/
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -43,7 +42,7 @@ if (db._collection(texts) === null) {
   collection.save({ text: "entry 3 from collection texts" });
 }
 else {
-  console.warn("collection '%s' already exists. Leaving it untouched.", texts);
+  console.log("collection '%s' already exists. Leaving it untouched.", texts);
 }
 
 // -----------------------------------------------------------------------------
@@ -52,5 +51,5 @@ else {
 
 // Local Variables:
 // mode: outline-minor
-// outline-regexp: "/// @brief\\|/// @addtogroup\\|/// @page\\|// --SECTION--\\|/// @\\}\\|/\\*jslint"
+// outline-regexp: "/// @brief\\|/// @addtogroup\\|// --SECTION--\\|/// @page\\|/// @\\}"
 // End:

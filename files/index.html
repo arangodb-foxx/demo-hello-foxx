@@ -2,9 +2,107 @@
 <html>
 <head>
 <title>An ArangoDB Foxx Demo Application</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<script type="text/javascript" src="scripts.js"></script>
+<link type="text/css" rel="stylesheet" href="highlighter.css" />
+<link type="text/css" rel="stylesheet" href="bootstrap.css" />
+
+
+<script type="text/javascript">
+$(document).ready(function () {
+  var sections = [
+    {
+      name: "Route parameters, request & response",
+      routes: [
+        [ "hello", "Route without parameters, returns plain text" ],
+        [ "hello_name/John%20Doe", "Route with parameter, returns plain text" ],
+        [ "sum?a=40&b=2", "Route with query component, returns plain text" ],
+        [ "appcontext", "Return JSON" ]
+      ]
+    },
+    {
+      name: "Accessing the database",
+      routes: [
+        [ "get_from_db", "Get entry from ArangoDB collection" ],
+        [ "run_aql", "Run AQL query from Foxx" ]
+      ]
+    },
+    {
+      name: "Using models",
+      routes: [
+        [ "createtiger/Roy", "Init FoxxModel & use method" ],
+        [ "savetiger/Garfield", "Init FoxxModel & save model in db" ]
+      ]
+    },
+    {
+      name: "Debugging",
+      routes: [
+        [ "log", "Write to ArangoDB log" ],
+        [ "response_to_text", "Convert the response object to text" ]
+      ]
+    },
+    {
+      name: "Error handling",
+      routes: [
+        [ "error", "Return HTTP status 303 and an error object" ]
+      ]
+    },
+    { 
+      name: "Delivering HTML, CSS, images",
+      routes: [
+        [ "static.html", "Show static html file" ],
+        [ "layout.css", "Using the assets option" ]
+      ]
+    },
+    {
+      name: "Misc",
+      routes: [
+        [ "global_var", "Access global variable" ],
+        [ "local_require", "Local require" ],
+        [ "echo_response", "Echo the response object" ],
+        [ "appcontext_as_txt", "Return application context as text" ]
+      ]
+    }
+  ];
+
+  var makeId = function (url) {
+    return 'src' + url.replace(/^\/?([a-zA-Z0-9_]+).*$/, '$1');
+  };
+
+  sections.forEach(function (s) {
+    var e = $('#examples');
+    e.append('<h2>' + s.name + '</h2>');
+    s.routes.forEach(function (r) {
+      e.append('<a href="' + r[0] + '">' + r[1] + '</a>');
+      e.append('<p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p>');
+    });
+  });
+
+  $.ajax({
+    type: "GET",
+    url: "source",
+    async: false,
+    cache: false
+  })
+  .success(function (data) {
+    if (data) {
+      console.log(data);
+      var name;
+      for (name in data) {
+        if (data.hasOwnProperty(name)) {
+          $('#' + makeId(name)).html(data[name]);
+          $('#' + makeId(name)).show();
+        }
+      }
+    }
+    sh_highlightDocument();
+  });
+});
+</script>
 </head>
 <body>
-<h1>Foxx usage examples</h1>
+
+<h1>Hello Foxx <small>Foxx usage examples</small></h1>
 <pre>
     /\
    (~(
@@ -14,50 +112,9 @@
      /|/--\|\ V
      " "   " "
 </pre>
-<h2>Route parameters, request & response</h2>
-<ul>
-    <li><a href="hello">1.1 Route without parameters, returns plain text</a></li>
-    <li><a href="hello/John%20Doe">1.2 Route with parameter, returns plain text</a></li>
-    <li><a href="sum?a=40&b=2">1.3 Route with query component, returns plain text</a></li>
-    <li><a href="appcontext">1.4 Return JSON</a></li>
-</ul>
 
-<h2>Accessing the database</h2>
-<ul>
-    <li><a href="get_from_db">2.1 Get entry from ArangoDB collection</a></li>
-    <li><a href="run_aql">2.2 Run AQL query from Foxx</a></li>
-</ul>
+<div id="examples">
+</div>
 
-<h2>Using models</h2>
-<ul>
-    <li><a href="createtiger/Roy">3.1 Init FoxxModel & use method</a></li>
-    <li><a href="savetiger/Garfield">3.2 Init FoxxModel & save model in db</a></li>
-</ul>
-
-<h2>Debugging</h2>
-<ul>
-    <li><a href="log">4.1 write to ArangoDB log</a></li>
-    <li><a href="response_to_text">4.2 Convert the response object to text</a></li>
-</ul>
-
-<h2>Error handling</h2>
-<ul>
-    <li><a href="error">5.1 Return http status 303 and an error object</a></li>
-</ul>
-
-
-<h2>Delivering HTML, CSS, images</h2>
-<ul>
-    <li><a href="static.html">6.1 Show static html file</a></li>
-    <li><a href="layout.css">6.2 Using the assets option</a></li>
-</ul>
-
-<h2>Misc</h2>
-<ul>
-  <li><a href="global_var">10.1 Access global variable</a></li>
-  <li><a href="local_require">10.2 Local require</a></li>
-  <li><a href="echo_response">10.3 Echo the response object</a></li>
-  <li><a href="appcontext_as_txt">10.5: Return application context as text</a></li>
-</ul>
 </body>
 </html>
