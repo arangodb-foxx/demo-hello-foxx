@@ -1,6 +1,6 @@
 {
     "name": "hello-foxx",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "This is 'Hello World' for ArangoDB Foxx.",
     "author": "Frank Celler",
     "thumbnail": "thumbnail.png",
@@ -11,7 +11,8 @@
     ],
 
     "controllers": {
-        "/": "app.js"
+        "/": "app.js",
+	"/coffee": "app2.coffee"
     },
 
     "setup": "scripts/setup.js",
