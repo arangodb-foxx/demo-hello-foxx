@@ -1,52 +1,57 @@
 {
-    "name": "hello-foxx",
-    "version": "1.4.0",
-    "description": "This is 'Hello World' for ArangoDB Foxx.",
-    "author": "Frank Celler",
-    "thumbnail": "thumbnail.png",
-    "contributors": [
-        {
-            "name": "luebbert42"
-        }
-    ],
+  "name": "hello-foxx",
+  "version": "1.4.1",
+  "description": "This is 'Hello World' for ArangoDB Foxx.",
+  "author": "Frank Celler",
+  "thumbnail": "thumbnail.png",
+  "isSystem": true,
+  "contributors": [
+    {
+      "name": "luebbert42"
+    }
+  ],
 
-    "controllers": {
-        "/": "app.js",
-	"/coffee": "app2.coffee"
+  "controllers": {
+    "/": "app.js",
+    "/kaffee": "kaffee.coffee"
+  },
+
+  "setup": "scripts/setup.js",
+  "teardown": "scripts/teardown.js",
+
+  "assets": {
+    "scripts.js": {
+      "files": [
+        "assets/vendor/jquery/jquery.js",
+        "assets/vendor/sh/sh_main.min.js",
+        "assets/vendor/sh/sh_javascript.js"
+      ]
     },
 
-    "setup": "scripts/setup.js",
-    "teardown": "scripts/teardown.js",
-
-    "assets": {
-        "scripts.js": {
-            "files": [
-                "assets/vendor/jquery/jquery.js",
-                "assets/vendor/sh/sh_main.min.js",
-                "assets/vendor/sh/sh_javascript.js"
-            ]
-        },
-        "layout.css": {
-            "files": [
-                "assets/css/base.css",
-                "assets/css/custom.css"
-            ]
-        },
-        "highlighter.css": {
-            "files": [
-                "assets/vendor/sh/highlighter.css"
-            ]
-        },
-        "bootstrap.css": {
-            "files": [
-                "assets/vendor/bootstrap/css/bootstrap.min.css",
-                "assets/vendor/bootstrap/css/bootstrap-responsive.min.css"
-            ]
-        }
-    },
-    "files": {
-        "/": "files"
+    "layout.css": {
+      "files": [
+        "assets/css/base.css",
+        "assets/css/custom.css"
+      ]
     },
 
-    "lib": "."
+    "highlighter.css": {
+      "files": [
+        "assets/vendor/sh/highlighter.css"
+      ]
+    },
+
+    "bootstrap.css": {
+      "files": [
+        "assets/vendor/bootstrap/css/bootstrap.min.css",
+        "assets/vendor/bootstrap/css/bootstrap-responsive.min.css"
+      ]
+    }
+  },
+
+  "files": {
+    "/": "files"
+  },
+
+  "lib": "."
 }
