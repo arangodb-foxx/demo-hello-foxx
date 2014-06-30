@@ -4,7 +4,7 @@
   "description": "This is 'Hello World' for ArangoDB Foxx.",
   "author": "Frank Celler",
   "thumbnail": "thumbnail.png",
-  "isSystem": true,
+  "isSystem": false,
   "contributors": [
     {
       "name": "luebbert42"
