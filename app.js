@@ -48,7 +48,7 @@
       actions = require("org/arangodb/actions"),
       helloworld = require("./lib/a").text,
       controller = new Controller(applicationContext),
-      texts = new Repository(applicationContext.collection("texts"));
+      texts = new Repository(controller.collection("texts"));
 
   // this part is here to generate the examples, DO NOT USE in your code!
   var code = {};
