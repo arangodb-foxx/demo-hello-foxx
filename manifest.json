@@ -1,13 +1,19 @@
 {
   "name": "hello-foxx",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "This is 'Hello World' for ArangoDB Foxx.",
   "author": "Frank Celler",
   "thumbnail": "thumbnail.png",
   "isSystem": false,
+  "engines": {
+    "arangodb": "~2.2"
+  },
   "contributors": [
     {
       "name": "luebbert42"
+    },
+    {
+      "name": "Alan Plum"
     }
   ],
 
