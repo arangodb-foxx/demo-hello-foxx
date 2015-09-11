@@ -1,20 +1,18 @@
 {
   "name": "hello-foxx",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "This is 'Hello World' for ArangoDB Foxx.",
   "author": "Frank Celler",
   "thumbnail": "thumbnail.png",
   "isSystem": false,
+
   "engines": {
-    "arangodb": ">=2.2.0 <2.7.0"
+    "arangodb": "~2.7"
   },
+
   "contributors": [
-    {
-      "name": "luebbert42"
-    },
-    {
-      "name": "Alan Plum"
-    }
+    { "name": "luebbert42" },
+    { "name": "Alan Plum" }
   ],
 
   "controllers": {
@@ -22,37 +20,9 @@
     "/kaffee": "kaffee.coffee"
   },
 
-  "setup": "scripts/setup.js",
-  "teardown": "scripts/teardown.js",
-
-  "assets": {
-    "scripts.js": {
-      "files": [
-        "assets/vendor/jquery/jquery.js",
-        "assets/vendor/sh/sh_main.min.js",
-        "assets/vendor/sh/sh_javascript.js"
-      ]
-    },
-
-    "layout.css": {
-      "files": [
-        "assets/css/base.css",
-        "assets/css/custom.css"
-      ]
-    },
-
-    "highlighter.css": {
-      "files": [
-        "assets/vendor/sh/highlighter.css"
-      ]
-    },
-
-    "bootstrap.css": {
-      "files": [
-        "assets/vendor/bootstrap/css/bootstrap.min.css",
-        "assets/vendor/bootstrap/css/bootstrap-responsive.min.css"
-      ]
-    }
+  "scripts": {
+    "setup": "scripts/setup.js",
+    "teardown": "scripts/teardown.js"
   },
 
   "files": {
