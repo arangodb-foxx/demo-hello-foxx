@@ -4,7 +4,6 @@
   "description": "This is 'Hello World' for ArangoDB Foxx.",
   "author": "Frank Celler",
   "thumbnail": "thumbnail.png",
-  "isSystem": false,
 
   "engines": {
     "arangodb": "~2.7"
