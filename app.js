@@ -46,6 +46,7 @@
       arangodb = require("org/arangodb"),
       db = arangodb.db,
       actions = require("org/arangodb/actions"),
+      inspect = require("org/arangodb").inspect,
       helloworld = require("./lib/a").text,
       controller = new Controller(applicationContext),
       texts = new Repository(applicationContext.collection("texts"));
@@ -53,7 +54,18 @@
   // this part is here to generate the examples, DO NOT USE in your code!
   var code = {};
   var oldController = controller;
-  controller = { get: function(a,b) { code[a] = String(b); return oldController.get(a,b); } };
+
+  controller = {
+    get: function(a, b) {
+      code[a] = String(b);
+      return oldController.get(a, b);
+    },
+
+    around: function(a, b) {
+      code[a] = String(b);
+      return oldController.around(a, b);
+    }
+  };
 
   // .............................................................................
   // Example: Route without parameters & simple text output with static text
@@ -79,23 +91,16 @@
 
   controller.get("/sum", function (req, res) {
     var sum = parseInt(req.params("a"), 10) + parseInt(req.params("b"), 10);
-    res.body = "Result is  " + sum.toString();
+    res.body = "Result is " + sum.toString();
   });
 
   // .............................................................................
-  // Example: getting the application context as JSON
+  // Example: getting the application context
   // .............................................................................
 
   controller.get('/appcontext', function (req, res) {
-    res.contentType = "application/json; charset=utf-8";
-
-    var c = applicationContext._shallowCopy;
-
-    delete c.foxxes;
-    delete c.routingInfo;
-    delete c.appModule;
-
-    res.body = JSON.stringify(c) + " \n";
+    res.set("Content-Type", "text/plain");
+    res.body = inspect(applicationContext) + " \n";
   });
 
   // .............................................................................
@@ -208,7 +213,7 @@
   // Example: convert the response object to text
   // .............................................................................
 
-  controller.get('/response_to_text', function (req, res, next, options) {
+  controller.get('/response_to_text', function (req, res, options, next) {
     var result = { request: req, options: options };
     res.responseCode = actions.HTTP_OK;
     res.contentType = "text/plain; charset=utf-8";
@@ -238,12 +243,38 @@
   // Example: echo the response object
   // .............................................................................
 
-  controller.get('/echo_response', function (req, res, next, options) {
+  controller.get('/echo_response', function (req, res, options, next) {
     var result = { request: req, options: options };
 
     res.responseCode = actions.HTTP_OK;
     res.contentType = "application/json; charset=utf-8";
     res.body = JSON.stringify(result);
+  });
+
+  // .............................................................................
+  // Example: special conversion to different format
+  // .............................................................................
+
+  controller.get('/format/a', function (req, res) {
+      var result = { a: 1, b: 2, c: "Hallo World" };
+
+    res.responseCode = actions.HTTP_OK;
+    res.body = result;
+  });
+
+  controller.around('/format/json/:func', function (req, res, options, next) {
+    var s = req.url.split('/');
+
+    s.pop();
+    s.pop();
+    s.push(req.params("func"));
+
+    req.suffix = s.join('/');
+
+    next(true);
+
+    res.set("Content-Type", "application/json; charset=utf-8");
+    res.body = JSON.stringify(res.body);
   });
 
   // .............................................................................

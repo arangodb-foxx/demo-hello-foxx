@@ -17,7 +17,7 @@ $(document).ready(function () {
         [ "hello", "Route without parameters, returns plain text" ],
         [ "hello_name/John%20Doe", "Route with parameter, returns plain text" ],
         [ "sum?a=40&b=2", "Route with query component, returns plain text" ],
-        [ "appcontext", "Return JSON" ]
+        [ "appcontext", "Show the application context" ]
       ]
     },
     {
@@ -60,7 +60,8 @@ $(document).ready(function () {
         [ "global_var", "Access global variable" ],
         [ "local_require", "Local require" ],
         [ "echo_response", "Echo the response object" ],
-        [ "appcontext_as_txt", "Return application context as text" ]
+        [ "appcontext_as_txt", "Return application context as text" ],
+        [ "format/json/:func", "Around method", "format/json/a" ]
       ]
     }
   ];
@@ -73,7 +74,8 @@ $(document).ready(function () {
     var e = $('#examples');
     e.append('<h2>' + s.name + '</h2>');
     s.routes.forEach(function (r) {
-      e.append('<h3><a href="' + r[0] + '">' + r[1] + '</a></h3>');
+      var p = r.length === 3 ? r[2] : r[0];
+      e.append('<h3><a href="' + p + '">' + r[1] + '</a></h3>');
       e.append('<div class=\"example\"><p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p></div>');
     });
   });
