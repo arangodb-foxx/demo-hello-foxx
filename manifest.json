@@ -15,8 +15,7 @@
   ],
 
   "controllers": {
-    "/": "app.js",
-    "/kaffee": "kaffee.coffee"
+    "/": "app.js"
   },
 
   "scripts": {
