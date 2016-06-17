@@ -1,5 +1,6 @@
 /*jslint indent: 2, nomen: true, maxlen: 100, white: true, plusplus: true, unparam: true */
 /*global require, applicationContext*/
+'use strict';
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief A Demo Foxx-Application written for ArangoDB
@@ -8,7 +9,7 @@
 ///
 /// DISCLAIMER
 ///
-/// Copyright 2014 ArangoDB GmbH, Cologne, Germany
+/// Copyright 2014-2016 ArangoDB GmbH, Cologne, Germany
 /// Copyright 2004-2014 triAGENS GmbH, Cologne, Germany
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,293 +27,415 @@
 /// Copyright holder is ArangoDB GmbH, Cologne, Germany
 ///
 /// @author Frank Celler
-/// @author Copyright 2014, ArangoDB GmbH, Cologne, Germany
+/// @author Copyright 2014-2016, ArangoDB GmbH, Cologne, Germany
 /// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
-(function () {
-  'use strict';
-
-  /*
+/*
     todo: example using underscore templates
     todo: example on how to properly create CRUD using a repository
     todo: example on format middleware
     todo: POST form example
-  */
+*/
 
-  var Controller = require("org/arangodb/foxx").Controller,
-      Repository = require("org/arangodb/foxx").Repository,
-      console = require("console"),
-      arangodb = require("org/arangodb"),
-      db = arangodb.db,
-      actions = require("org/arangodb/actions"),
-      inspect = require("org/arangodb").inspect,
-      helloworld = require("./lib/a").text,
-      controller = new Controller(applicationContext),
-      texts = new Repository(applicationContext.collection("texts"));
+// standard ArangoDB modules
+const conole = require("console");
 
-  // this part is here to generate the examples, DO NOT USE in your code!
-  var code = {};
-  var oldController = controller;
+const arangodb = require("@arangodb");
+const actions = require("@arangodb/actions");
+const createRouter = require("@arangodb/foxx/router");
 
-  controller = {
-    get: function(a, b) {
-      code[a] = String(b);
-      return oldController.get(a, b);
-    },
+// standard ArangoDB variables
+const db = arangodb.db;
 
-    around: function(a, b) {
-      code[a] = String(b);
-      return oldController.around(a, b);
+// HELLO-FOXX collections and libraries
+const texts = module.context.collection('texts');
+const helloworld = require("./lib/a").text;
+
+// HELLO-FOXX router
+const router = createRouter();
+module.exports = router;
+
+// this part is here to generate the examples, DO NOT USE in your code!
+const snipplets = {};
+const sections = {};
+
+const sectionRouteParameters = "Route parameters, request & response";
+const sectionDatabase = "Accessing the database";
+const sectionModels = "Using models";
+const sectionDebugging = "Debugging";
+const sectionError = "Error handling";
+const sectionMisc = "Misc";
+
+function executeSourceCode(section, name, desc, code) {
+  const func = new Function('router, db, texts, require, module, actions, helloworld', code);
+  func(router, db, texts, require, module, actions, helloworld);
+
+  const parts = name.split("|");
+  const key = parts[0];
+  snipplets[key] = code.trim();
+
+  if (sections[section] === undefined) {
+    sections[section] = [];
+  }
+
+  if (parts[1] === "NOLINK") {
+    sections[section].push([ key, desc, "NOLINK" ]);
+  } else {
+    sections[section].push([ key, desc, parts.join("") ]);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Section: Route parameters, request & response
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: Route without parameters & simple text output with static text
+// .............................................................................
+
+executeSourceCode(
+  sectionRouteParameters,
+  "hello",
+  "Route without parameters, returns plain text",
+  `
+router.get('/hello', function (req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = "Hello World!\\n";
+});
+`);
+
+// .............................................................................
+// Example: Route without parameters & simple text output with JSON object
+// .............................................................................
+
+executeSourceCode(
+  sectionRouteParameters,
+  "hello_text",
+  "Route without parameters, returns plain text from JSON",
+  `
+router.get('/hello_text', function (req, res) {
+  // default content type is text/plain
+  res.body = { result: "Hello World!\\n" };
+});
+`);
+
+// .............................................................................
+// Example: Route without parameters & simple JSON output with JSON object
+// .............................................................................
+
+executeSourceCode(
+  sectionRouteParameters,
+  "hello_json",
+  "Route without parameters, returns JSON object",
+  `
+router.get('/hello_json', function (req, res) {
+  res.json({ result: "Hello World!\\n" });
+});
+`);
+
+// .............................................................................
+// Example: Route with parameter & simple text output
+// .............................................................................
+
+executeSourceCode(
+  sectionRouteParameters,
+  "hello_name|/John%20Doe",
+  "Route with parameter, returns plain text",
+  `
+router.get("/hello_name/:name", function (req, res) {
+  res.body = "Hello " + req.param("name");
+});
+`);
+
+// .............................................................................
+// Example: Accessing the query component, return text
+// .............................................................................
+
+executeSourceCode(
+  sectionRouteParameters,
+  "sum|?a=40&b=2",
+  "Route with query component, returns plain text",
+  `
+router.get("/sum", function (req, res) {
+  const sum = parseInt(req.param("a"), 10) + parseInt(req.param("b"), 10);
+  res.body = "Result is " + sum.toString();
+}).queryParam("a").queryParam("b");
+`);
+
+// -----------------------------------------------------------------------------
+// Section: Accessing the database
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: get an entry from the texts-collection in ArangoDB. The collection is
+// set up and populated in scripts/setup.js
+// .............................................................................
+
+executeSourceCode(
+  sectionDatabase,
+  "get_from_db",
+  "Get entry from ArangoDB collection",
+  `
+router.get('/get_from_db', function (req, res) {
+  res.body = texts.any().text + "\\n";
+});
+`);
+
+// .............................................................................
+// Example: run AQL query from FOXX
+// .............................................................................
+
+executeSourceCode(
+  sectionDatabase,
+  "run_aql",
+  "Run AQL query from Foxx",
+  `
+router.get('/run_aql', function (req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+
+  const stmt = db._createStatement({ "query": "FOR i IN [ 1, 2 ] RETURN i * 2" });
+  const c = stmt.execute();
+
+  res.json(c.toArray());
+});
+`);
+
+// -----------------------------------------------------------------------------
+// Section: Using models
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: use method
+// .............................................................................
+
+executeSourceCode(
+  sectionModels,
+  "tiger|/Roy",
+  "Use a method",
+  `
+router.get('/tiger/:name', function (req, res) {
+  const Tiger = require("./models/tiger").Tiger;
+  const myTiger = new Tiger(req.param("name"));
+
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = myTiger.growl();
+});
+`);
+
+// .............................................................................
+// Example: Save FoxxModel in DB
+// .............................................................................
+
+executeSourceCode(
+  sectionModels,
+  "save_tiger|NOLINK",
+  "Validate a model",
+  `
+const TigerModel = require("./models/tiger").Model;
+
+router.post('/save_tiger/:name', function (req, res) {
+  texts.save(req.body);
+
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = "Validated and saved it in texts collection";
+}).body(TigerModel);
+`);
+
+// -----------------------------------------------------------------------------
+// Section: Debugging
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: write to ArangoDB log
+// .............................................................................
+
+executeSourceCode(
+  sectionDebugging,
+  "log",
+  "Write to ArangoDB log",
+  `
+router.get('/log', function (req, res) {
+  try {
+    throw new RangeError("[hello-foxx] Division by zero!");
+  }
+  catch (e) {
+    console.warn(e.message);
+  }
+
+  res.body = "division by zero error was triggered and an "
+    + "exception message was logged in arangodb log";
+});
+`);
+
+// .............................................................................
+// Example: echo the response object
+// .............................................................................
+
+executeSourceCode(
+  sectionDebugging,
+  "echo_response",
+  "Echo the request object ",
+  `
+router.get('/echo_response', function (req, res, options, next) {
+  const result = { request: req };
+  res.json(result);
+});
+`);
+
+// .............................................................................
+// Example: convert the response object to text
+// .............................................................................
+
+executeSourceCode(
+  sectionDebugging,
+  "inspect_response",
+  "Inspect the request object ",
+  `
+router.get('/inspect_response', function (req, res, next) {
+  const result = { request: req };
+  res.body = require("@arangodb").inspect(result);
+});
+`);
+
+// .............................................................................
+// Example: getting the context
+// .............................................................................
+
+executeSourceCode(
+  sectionDebugging,
+  "context",
+  "Show the module context",
+  `
+router.get('/context', function (req, res) {
+  res.set("Content-Type", "text/plain");
+  res.body = require("@arangodb").inspect(module.context) + " \\n";
+});
+`);
+
+// -----------------------------------------------------------------------------
+// Section: Error handling
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: Return http status 303 and an error object
+// .............................................................................
+
+executeSourceCode(
+  sectionError,
+  "error",
+  "Return HTTP status 403 and an error object",
+  `
+router.get('/error',function (req, res) {
+  try {
+    throw new RangeError("[hello-foxx] Division by zero!");
+  } catch (e) {
+    if (!(e instanceof RangeError)) {
+      throw e;
     }
+
+    res.throw(403, "This went completely wrong. Sorry!");
+  }
+}).error(403, "throw an forbidden as example");
+`);
+
+// -----------------------------------------------------------------------------
+// Section: Misc
+// -----------------------------------------------------------------------------
+
+// .............................................................................
+// Example: Deliver static file
+// .............................................................................
+
+executeSourceCode(
+  sectionMisc,
+  "static.html",
+  "Show static html file",
+  `
+/* no special code required, the manifest contains
+
+  "files": {
+    "/": "files"
+  },
+
+*/
+`);
+
+// .............................................................................
+// Example: Accessing global variables
+// .............................................................................
+
+executeSourceCode(
+  sectionMisc,
+  "global_var",
+  "Accessing a global variable",
+  `
+router.get('/global_var', function (req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = helloworld + " and accessed through a global variable\\n";
+});
+`);
+
+// .............................................................................
+// Example: local require
+// .............................................................................
+
+executeSourceCode(
+  sectionMisc,
+  "local_require",
+  "Accessing a module locally",
+  `
+router.get('/local_require', function (req, res) {
+  res.set("Content-Type", "text/plain; charset=utf-8");
+  res.body = require("./lib/a").text + " and accessed with a local require\\n";
+  res.statusCode = actions.HTTP_OK;
+});
+`);
+
+// .............................................................................
+// Example: around
+// .............................................................................
+
+executeSourceCode(
+  sectionMisc,
+  "log_request",
+  "Middleware to log all requests",
+  `
+router.get('/log_request', function (req, res) {
+  const result = { a: 1, b: 2, c: "Hallo World" };
+  res.responseCode = actions.HTTP_OK;
+  res.body = result;
+});
+
+router.use('/log_request', function (req, res, next) {
+  let start = Date.now();
+  next();
+  console.log('Request handled in', Date.now() - start, 'ms');
+});
+`);
+
+// .............................................................................
+// Helper function to retrieve the source code of the defined routes
+// .............................................................................
+
+router.get('/source', function (req, res) {
+  const normalize = function (url) {
+    return url.replace(/^\/?([a-zA-Z0-9_]+).*$/, '$1');
   };
 
-  // .............................................................................
-  // Example: Route without parameters & simple text output with static text
-  // .............................................................................
+  const source = {};
 
-  controller.get('/hello', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = "Hello World!\n";
-  });
-
-  // .............................................................................
-  // Example: Route with parameter & simple text output
-  // .............................................................................
-
-  controller.get("/hello_name/:name", function (req, res) {
-    res.set("Content-Type", "text/plain");
-    res.body = "Hello " + req.params("name");
-  });
-
-  // .............................................................................
-  // Example: Accessing the query component, return text
-  // .............................................................................
-
-  controller.get("/sum", function (req, res) {
-    var sum = parseInt(req.params("a"), 10) + parseInt(req.params("b"), 10);
-    res.body = "Result is " + sum.toString();
-  });
-
-  // .............................................................................
-  // Example: getting the application context
-  // .............................................................................
-
-  controller.get('/appcontext', function (req, res) {
-    res.set("Content-Type", "text/plain");
-    res.body = inspect(applicationContext) + " \n";
-  });
-
-  // .............................................................................
-  // Example: get an entry from the texts-collection in ArangoDB. The collection is
-  // set up and populated in scripts/setup.js
-  // .............................................................................
-
-  controller.get('/get_from_db', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = texts.collection.any().text + "\n";
-  });
-
-  // .............................................................................
-  // Example: run AQL query from FOXX
-  // .............................................................................
-
-  controller.get('/run_aql', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-
-    var stmt = db._createStatement({ "query": "FOR i IN [ 1, 2 ] RETURN i * 2" }),
-    c = stmt.execute();
-
-    res.body = c.toArray().toString();
-  });
-
-  // .............................................................................
-  // Example: Init FoxxModel & use method
-  // .............................................................................
-
-  controller.get('/createtiger/:name', function (req, res) {
-    var Tiger = require("./models/tiger").Model,
-
-    myTiger = new Tiger({
-      name: req.params("name")
-    });
-
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = myTiger.growl();
-  });
-
-  // .............................................................................
-  // Example: Save FoxxModel in DB
-  // .............................................................................
-
-  controller.get('/savetiger/:name', function (req, res) {
-    var Tiger = require("./models/tiger").Model,
-    myTiger = new Tiger({
-      name: req.params("name")
-    });
-
-    if (myTiger.get('size') === null) {
-      myTiger.set('size', Math.floor((Math.random() * 190) + 100));
+  for (let key in snipplets) {
+    if (snipplets.hasOwnProperty(key)) {
+      source[normalize(key)] = snipplets[key];
     }
+  }
 
-    texts.collection.save(myTiger.forDB());
+  const secs = [];
 
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = "Converted myTiger with myTiger.forDB() and saved it in texts collection";
-  });
+  Object.keys(sections).forEach(function(key) {
+    secs.push({ name: key, routes: sections[key] });
+  });  
 
-  // .............................................................................
-  // Example: write to ArangoDB log
-  // .............................................................................
-
-  controller.get('/log', function (req, res) {
-    try {
-      throw new RangeError("[hello-foxx] Division by zero!");
-    }
-    catch (e) {
-      console.warn(e.message);
-    }
-
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = "division by zero error was triggered and an "
-             + "exception message was logged in arangodb log";
-  });
-
-  // .............................................................................
-  // Example: Return http status 303 and an error object
-  // .............................................................................
-
-  controller.get('/error',function (req, res) {
-    throw new RangeError("[hello-foxx] Division by zero!");
-  }).errorResponse(RangeError, 303, "This went completely wrong. Sorry!",
-                   function (e) {
-                     return {
-                       code: 123,
-                       msg: e.message
-                     };
-                   });
-
-  // .............................................................................
-  // Example: deliver static html file
-  // app.js is not involved for this example
-  // in this demo app all files in the files folder can be accessed static
-  // this is configured in manifest.js in the "files" section
-  // .............................................................................
-
-  // .............................................................................
-  // Example: Using the assets option
-  // app.js is not involved for this example
-  // manifest.js contains a definition for "layout.css"
-  // assets/css/base.css and assets/css/custom.css are combined and accessible
-  // under the name "layout.css"
-  // the same works for Javascript, too, you can also use wildcards, see
-  // the manual for more information on this
-  // .............................................................................
-
-  // .............................................................................
-  // Example: convert the response object to text
-  // .............................................................................
-
-  controller.get('/response_to_text', function (req, res, options, next) {
-    var result = { request: req, options: options };
-    res.responseCode = actions.HTTP_OK;
-    res.contentType = "text/plain; charset=utf-8";
-    res.body = arangodb.inspect(result);
-  });
-
-  // .............................................................................
-  // Example: Accessing global variables
-  // .............................................................................
-
-  controller.get('/global_var', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = helloworld + " and accessed through a global variable\n";
-  });
-
-  // .............................................................................
-  // Example: local require
-  // .............................................................................
-
-  controller.get('/local_require', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = require("./lib/a").text + " and accessed with a local require\n";
-    res.statusCode = actions.HTTP_OK;
-  });
-
-  // .............................................................................
-  // Example: echo the response object
-  // .............................................................................
-
-  controller.get('/echo_response', function (req, res, options, next) {
-    var result = { request: req, options: options };
-
-    res.responseCode = actions.HTTP_OK;
-    res.contentType = "application/json; charset=utf-8";
-    res.body = JSON.stringify(result);
-  });
-
-  // .............................................................................
-  // Example: special conversion to different format
-  // .............................................................................
-
-  controller.get('/format/a', function (req, res) {
-      var result = { a: 1, b: 2, c: "Hallo World" };
-
-    res.responseCode = actions.HTTP_OK;
-    res.body = result;
-  });
-
-  controller.around('/format/json/:func', function (req, res, options, next) {
-    var s = req.url.split('/');
-
-    s.pop();
-    s.pop();
-    s.push(req.params("func"));
-
-    req.suffix = s.join('/');
-
-    next(true);
-
-    res.set("Content-Type", "application/json; charset=utf-8");
-    res.body = JSON.stringify(res.body);
-  });
-
-  // .............................................................................
-  // Example: return application context as text
-  // .............................................................................
-
-  controller.get('/appcontext_as_txt', function (req, res) {
-    res.set("Content-Type", "text/plain; charset=utf-8");
-    res.body = arangodb.inspect(applicationContext) + " \n";
-  });
-
-  // .............................................................................
-  // Helper function to retrieve the source code of the defined routes
-  // .............................................................................
-
-  controller.get('/source', function (req, res) {
-    var normalize = function (url) {
-      return url.replace(/^\/?([a-zA-Z0-9_]+).*$/, '$1');
-    };
-
-    var result = {};
-    var key;
-
-    for (key in code) {
-      if (code.hasOwnProperty(key)) {
-        result[normalize(key)] = code[key];
-      }
-    }
-
-    res.json(result);
-  });
-}());
-
-// -----------------------------------------------------------------------------
-// --SECTION--                                                       END-OF-FILE
-// -----------------------------------------------------------------------------
-
-// Local Variables:
-// mode: outline-minor
-// outline-regexp: "/// @brief\\|/// {@inheritDoc}\\|/// @page\\|// --SECTION--\\|/// @\\}"
-// End:
+  res.json({ sources: source, sections: secs });
+});

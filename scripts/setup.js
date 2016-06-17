@@ -1,5 +1,6 @@
 /*jslint indent: 2, nomen: true, maxlen: 100, white: true, plusplus: true, unparam: true */
 /*global require, applicationContext*/
+'use strict';
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief A Demo Foxx-Application written for ArangoDB
@@ -8,6 +9,7 @@
 ///
 /// DISCLAIMER
 ///
+/// Copyright 2014-2016 ArangoDB GmbH, Cologne, Germany
 /// Copyright 2010-2013 triagens GmbH, Cologne, Germany
 ///
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,14 +27,14 @@
 /// Copyright holder is triAGENS GmbH, Cologne, Germany
 ///
 /// @author Dr. Frank Celler
+/// @author Copyright 2014-2016, ArangoDB GmbH, Cologne, Germany
 /// @author Copyright 2011-2013, triAGENS GmbH, Cologne, Germany
 ////////////////////////////////////////////////////////////////////////////////
 
-var console = require("console");
-var arangodb = require("org/arangodb");
-var db = arangodb.db;
+const arangodb = require("@arangodb");
 
-var texts = applicationContext.collectionName("texts");
+const db = arangodb.db;
+const texts = module.context.collectionName('texts');
 
 if (db._collection(texts) === null) {
   var collection = db._create(texts);
@@ -44,12 +46,3 @@ if (db._collection(texts) === null) {
 else {
   console.log("collection '%s' already exists. Leaving it untouched.", texts);
 }
-
-// -----------------------------------------------------------------------------
-// --SECTION--                                                       END-OF-FILE
-// -----------------------------------------------------------------------------
-
-// Local Variables:
-// mode: outline-minor
-// outline-regexp: "/// @brief\\|/// @addtogroup\\|// --SECTION--\\|/// @page\\|/// @\\}"
-// End:

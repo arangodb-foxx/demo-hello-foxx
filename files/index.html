@@ -10,75 +10,9 @@
 
 <script type="text/javascript">
 $(document).ready(function () {
-  var sections = [
-    {
-      name: "Route parameters, request & response",
-      routes: [
-        [ "hello", "Route without parameters, returns plain text" ],
-        [ "hello_name/John%20Doe", "Route with parameter, returns plain text" ],
-        [ "sum?a=40&b=2", "Route with query component, returns plain text" ],
-        [ "appcontext", "Show the application context" ]
-      ]
-    },
-    {
-      name: "Accessing the database",
-      routes: [
-        [ "get_from_db", "Get entry from ArangoDB collection" ],
-        [ "run_aql", "Run AQL query from Foxx" ]
-      ]
-    },
-    {
-      name: "Using models",
-      routes: [
-        [ "createtiger/Roy", "Init FoxxModel & use method" ],
-        [ "savetiger/Garfield", "Init FoxxModel & save model in db" ]
-      ]
-    },
-    {
-      name: "Debugging",
-      routes: [
-        [ "log", "Write to ArangoDB log" ],
-        [ "response_to_text", "Convert the response object to text" ]
-      ]
-    },
-    {
-      name: "Error handling",
-      routes: [
-        [ "error", "Return HTTP status 303 and an error object" ]
-      ]
-    },
-    { 
-      name: "Delivering HTML, CSS, images",
-      routes: [
-        [ "static.html", "Show static html file" ],
-        [ "layout.css", "Using the assets option" ]
-      ]
-    },
-    {
-      name: "Misc",
-      routes: [
-        [ "global_var", "Access global variable" ],
-        [ "local_require", "Local require" ],
-        [ "echo_response", "Echo the response object" ],
-        [ "appcontext_as_txt", "Return application context as text" ],
-        [ "format/json/:func", "Around method", "format/json/a" ]
-      ]
-    }
-  ];
-
   var makeId = function (url) {
     return 'src' + url.replace(/^\/?([a-zA-Z0-9_]+).*$/, '$1');
   };
-
-  sections.forEach(function (s) {
-    var e = $('#examples');
-    e.append('<h2>' + s.name + '</h2>');
-    s.routes.forEach(function (r) {
-      var p = r.length === 3 ? r[2] : r[0];
-      e.append('<h3><a href="' + p + '">' + r[1] + '</a></h3>');
-      e.append('<div class=\"example\"><p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p></div>');
-    });
-  });
 
   $.ajax({
     type: "GET",
@@ -89,9 +23,23 @@ $(document).ready(function () {
   .success(function (data) {
     if (data) {
       var name;
-      for (name in data) {
-        if (data.hasOwnProperty(name)) {
-          $('#' + makeId(name)).html(data[name]);
+
+      data.sections.forEach(function (s) {
+        var e = $('#examples');
+        e.append('<h2>' + s.name + '</h2>');
+        s.routes.forEach(function (r) {
+          if (r[2] === "NOLINK") {
+            e.append('<h3>' + r[1] + '</h3>');
+          } else {
+            e.append('<h3><a href="' + r[2] + '">' + r[1] + '</a></h3>');
+          }
+          e.append('<div class=\"example\"><p><pre style="display:none;" class="sh_javascript" id="' + makeId(r[0]) + '"></pre></p></div>');
+        });
+      });
+
+      for (name in data.sources) {
+        if (data.sources.hasOwnProperty(name)) {
+          $('#' + makeId(name)).html(data.sources[name]);
           $('#' + makeId(name)).show();
         }
       }
